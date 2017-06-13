@@ -1,0 +1,145 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University/School Laboratory Report
+% LaTeX Template
+% Version 3.1 (25/3/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Linux and Unix Users Group at Virginia Tech Wiki 
+% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+\usepackage{graphicx} % Required for the inclusion of images
+\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Sprawozdanie 2 z Web 2.0} % Title
+
+\author{Adrianż \textsc{Jeż}} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+\begin{center}
+\begin{tabular}{l r}
+Prowadzący: & dr inż. Robert Perliński % Instructor/supervisor
+\end{tabular}
+\end{center}
+
+% If you wish to include an abstract, uncomment the lines below
+% \begin{abstract}
+% Abstract text
+% \end{abstract}
+
+%----------------------------------------------------------------------------------------
+%	SECTION 1
+%----------------------------------------------------------------------------------------
+
+\section{Opis Aplikacji}
+
+W ramach sprawozdania nr 2 wykonan aplikację z wykorzystaniem framework-u. Aplikacja pozwala na odczyt i zapis do bazy danych listy zwierząt (psów). Ponadto stworzono testowy kontroler, pozwalający na przetestowanie stworzonych filtrów. W aplikacji zawarto wszystkie elementy spełniające kryteria oceny: 5.
+
+
+\section{Elementy kontrukcyjne aplikacji}
+
+\subsection{Moduły}
+Aplikacja składa się z dwóch zależnych modułów: głównego o nazwie \verb|mainModule|, oraz modułu będącego dostarcą filtrów: \verb|filtersProvider|.
+
+\subsection{Własne filtry}
+Jak wspomniano powyżej, w skład aplikacji wchodzi zależy moduł \verb|filtersProvider|. W nim nastąpiła definicja dwóch filtrów. Jednym z nich jest \verb|appendLength|, który dla każdego otrzymanego elementu będącego obiektem typu \verb|String| dołącza informacje o jego długości. Kolejny filtr o nazwie \verb|makeMirror| dokonuje 'doczepienia' lustrzanego odbicia ciągu znaków.  
+
+\subsection{Usługi}
+Aplikacja posiada zdefiniowaną usługę \verb|Factory| o nazwie \verb|services|. Służy ona do komunikacji z wykorzystam api poprzez użycie serwisu \verb|$http|. Definiuje dwie metody. Pierwsza z nich to \verb|getDogs()| powodująca pobranie listy piesków z serwera. Kolejna metoda to \verb|insertDog(dog)|, jak nazwa wskazuje, służy do dodania obiektu psa podanego jako argument jej wywołania. 
+
+\subsection{Wykorzystane API}
+
+Na potrzeby projektu stworzono proste API pozwalające na odczyt i zapis obiektów (psów). Jego kod znajduje się w utworzonym repozytorium github pod adresem: https://github.com/adrianjez/angular\_project\_api . Wykorzystano technologie: mongoDB i nodeJS. Aplikacja (API) została umieszczona na serwisie Heroku pod adresem https://quiet-castle-94433.herokuapp.com/ i posiada następujące endpointy:
+
+\begin{itemize}
+	\item \textbackslash  - pozwala na uzyskanie listy psów (GET),
+	\item \textbackslash add  - pozwala na dodanie psa podając jego parametry w JSON-ie (POST).
+\end{itemize}
+
+\subsection{Dyrektywy}
+W projekcie stworzono dwie zależne dyrektywy. Pierwsza z nich to \verb|<dogs-list>|, której kontroler wykorzystując wstrzyknięty, wcześniej stworzony serwis \verb|services|, pobiera listę piesków z serwera (zapisując w zasięgu \verb|$scope|). Ponadto ta dyrektywa odpowiedzialna jest za wyrenderowanie pliku szablonu \verb|dogs_list.html|, w której użyta jest dyrektywa \verb|<dog-item>|, odpowiedzialna jest za wyświetlenie detali pojedynczego psa. 
+
+\subsection{Wykorzystane wbudowane filtry}
+Poniżej przedstawiono wykorzystane  filtry w aplikacji. Część z nich wykorzystano w połączeniu z internacjonalizacją, do czego było wymagane dołączenie pliku \verb|angular-locale_pl-pl.js|. 
+\subsubsection{Filtr orderBy}
+Wyświetlając listę psów, posortowano ją po nazwie z wykorzystaniem \verb|orderBy|.
+\begin{lstlisting}[frame=single]
+<dog-item ng-repeat="dog in dogs | orderBy : 'rasa'" 
+	ng-model="dog"></dog-item>
+\end{lstlisting}
+
+\subsubsection{Filtr date}
+W celu wyświetlenia dzisiejszego dnia na początku strony, wykorzystano filtr \verb|date| z parametrem \verb|"fullDate"|.  Dzięki internacjonalizacji mamy polską nazwę tygodnia i miesiąca.
+\begin{lstlisting}[frame=single]  
+<p ng-controller="DateTodayController">
+Dzisiaj mamy: {{ dzisiejszaData | date : "fullDate" }}</p>
+\end{lstlisting}
+
+\subsubsection{Filtr uppercase}
+Aby nazwy psich ras były z dużych liter wykorzystano filtr \verb|uppercase|. 
+\begin{lstlisting}[frame=single]  
+<h1>Rasa: {{ngModel.rasa | uppercase}} </h1>
+\end{lstlisting}
+
+\subsubsection{Filtr currency}
+W celu wyświetlenia wartości ceny wraz z walutą użyto filtru \verb|currency|. Nacjonalizacja umożliwiła wyświetlenie wartości w polskiej walucie zł.
+ 
+\begin{lstlisting}[frame=single]  
+<p> Srednia cena: {{ngModel.cena | currency}} </p>
+\end{lstlisting}
+
+\subsection{Kontrolery}
+
+Na potrzeby aplikacji zdefiniowano dwa kontrolery. Pierwszy z nich o nazwie \verb|DateTodayController| dostarcza informacji o dzisiejszej dacie, która kolejno jest wyświetlana w pliku \verb|index.html|. W celu przetestowania filtrów zdefiniowanych w osobnym module (wcześniej omówionej) również stworzono pomocniczo kontroler \verb|FiltersProviderTester|, dostarczającej do scope-a danych poddawanych filtrowaniu. 
+
+\section{Najważniejsze pliki aplikacji}
+\begin{lstlisting}[frame=single]  
+|------- angular-locale_pl-pl.js
+|------- index.html
+|------- script.js
+|------- szablony
+	 |-------dog_item.html
+	 |------- dogs_list.html
+\end{lstlisting}
+
+\section{Podsumowanie i wnioski}
+
+Wykonując projekt z użyciem frameworku Angular można dojść do wniosku, iż jest on bardzo użytecznym frameworkiem służącym do tworzenia aplikacji. Dzięki niemu zamiast pisać dużej ilości mało znaczącego kodu (boilerplate-u), w łatwy sposób możemy dokonać komunikacji z serwerem używając REST-API. Ponadto możliwość dzielenia fragmentów aplikacji na komponenty, pozwala na zachowanie dużego porządku w kodzie, co ma istotne znaczenie dla dużych projektów, które rozwijane są nawet latami. Angular zdecydowanie jest przyszłościowym narzedziem tworzenia aplikacju internetowych.
+
+
+\end{document}

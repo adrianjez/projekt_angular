@@ -4,8 +4,42 @@
 <script src="angular-locale_pl-pl.js"></script>
 <script src="script.js"></script>
 <body>
-	<div ng-app="mainModule" ng-controller="ArticlesController">
-		{{articles}}
+
+
+	<div ng-app="mainModule">
+		<p ng-controller="DateTodayController">Dzisiaj mamy: {{ dzisiejszaData | date : "fullDate" }}</p>
+		
+		<div ng-controller="DogsCreationController">
+			<p>Rasa: <input type="text" ng-model="creator_Rasa"></p>
+			<p>Sredni wiek zycia: <input type="number" ng-model="creator_SredniWiekZycia">
+			<p>Maksymalna predkosc biegu : <input type="number" ng-model="creator_MaksymalnaPredkoscBiegu">
+			<p>Zdjecie URL: <input type="url" ng-model="creator_Zdjecie">
+			<p>Cena: <input type="number" ng-model="creator_Cena">
+			<p>Opis: <input type="text" ng-model="creator_Opis">
+			<button ng-click="addDog()"> Dodaj </button>
+		</div>
+
+		<dogs-list></dogs-list>
+
+		<h2>Testowanie filtrow </h2>
+
+		<div ng-controller="FiltersProviderTester">
+			<h3>Dolaczenie dlugosci </h3>
+			<ul>
+				<li ng-repeat="item in testData">
+        			{{item | appendLength}}
+    			</li>
+			</ul>
+			<h3> Mirror </h3>
+			<ul>
+				<li ng-repeat="item in testData">
+					{{item | makeMirror}}
+				</li>
+			</ul>
+		</div>
+		
+
 	</div>
+
 
 </body>
